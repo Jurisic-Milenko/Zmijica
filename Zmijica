@@ -150,16 +150,20 @@
           document.getElementById("counter").innerHTML = "Score: " + score;
 
           var i = 1
+
           while(i < zmija.length){
             if(zmijaGlavaX == zmija[i][0] && zmijaGlavaY == zmija[i][1]){
               zmija = [[300,300]]
               zmijaGlavaX = 300;
               zmijaGlavaY = 300;
               score = 0;
+              duzina = 0;
+              direction = 'right';
               gameInProgress = 0;
             }
           i++
           }
+
           context.clearRect(0, 0, canvas.width, canvas.height);
           context.fillStyle = 'white';
           context.strokeRect(0,0,canvas.width,canvas.height);
@@ -178,8 +182,10 @@
           if(direction == 'down'){
             zmijaGlavaY+=10
           }
+
           drawZmija();
           doubletap = 0
+
         }
       }
 
