@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Kontrolni zadatak</title>
+    <canvas id="kontrolni" width="600" height="600"></canvas>
+    <script type="text/javascript">
+      var canvas = document.getElementById('kontrolni');
+      if(canvas.getContext){
+        var context = canvas.getContext('2d');
+      }
+
+      var direction = 'right'
+      var zmija = [[300,300]]
+      var zmijaGlavaX = 300
+      var zmijaGlavaY = 300
+      var hranaX = 500
+      var hranaY = 300
+      var duzina = 0
+      var doubletap = 0
+      var score = 0
+      var hightScore = 0
+      var gameInProgress = 0
+
+      document.addEventListener('keypress', function(event) {
+        if(gameInProgress == 0){
+          gameInProgress = 1;
+        }
+        
+      });
+
+      document.addEventListener('keypress', function(event) {
+        if(((event.keyCode == 87 || event.keyCode == 119)&& direction != 'down') && doubletap == 0){
+          direction = 'up'
+          doubletap = 1
+        }
+        if(((event.keyCode == 83 || event.keyCode == 115)&& direction != 'up') && doubletap == 0){
+          direction = 'down'
+          doubletap = 1
+        }
+        if(((event.keyCode == 69 - 1 || event.keyCode == 100) && direction != 'left') && doubletap == 0){
+          direction = 'right'
+          doubletap = 1
+        }
+        if(((event.keyCode == 65 || event.keyCode == 97)&& direction != 'right') && doubletap == 0){
+          direction = 'left'
+          doubletap = 1
+        }
+      });
+
+      function menu(){
+        context.clearRect(0, 0, screen.width, screen.height);
+        context.font = "30px Arial";
+        context.fillText("Zmijica", 275, 50);
+        context.font = "15px Arial";
+        context.fillText("HightScore:" + hightScore,270,125);
+        context.fillText("Press any button to begin",235,200);
+      }
+
+      function drawZmija(){
+        //if(zmijaGlavaX < 0 || zmijaGlavaY < 0 || zmijaGlavaX > 600 || zmijaGlavaY > 600){
+        //    zmija = [[300,300]]
+        //    zmijaGlavaX = 300;
+        //    zmijaGlavaY = 300;
+        //    score = 0;
+        //    gameInProgress = 0;
+        //}
+        if(zmijaGlavaX < 0 ){
+            zmijaGlavaX = 590;
+        }
+        if(zmijaGlavaY < 0 ){
+            zmijaGlavaY = 590;
+        }
+        if(zmijaGlavaX > 590 ){
+            zmijaGlavaX = 0;
+        }
+        if(zmijaGlavaY > 590 ){
+            zmijaGlavaY = 0;
+        }
+
+        context.beginPath();
+        context.fillStyle = 'black';
+        context.fillRect(zmijaGlavaX,zmijaGlavaY,10,10);
+
+        var i = zmija.length
+
+        while(i > 1){
+          zmija[i-1][0] = zmija[i-2][0]
+          zmija[i-1][1] = zmija[i-2][1]
+          i--
+        }
+
+        var i = 1
+
+        while(i < zmija.length){
+          context.fillRect(zmija[i][0],zmija[i][1],10,10)
+          i++
+        }
+        
+        zmija[0][0] = zmijaGlavaX
+        zmija[0][1] = zmijaGlavaY
+        context.closePath();
+      }
+
+      function drawHrana(){
+        context.beginPath();
+        context.fillStyle = 'black';
+        context.fillRect(hranaX,hranaY,10,10);
+        context.closePath();
+      }
+
+      function isFoodEaten(){
+        if(hranaX == zmijaGlavaX && hranaY == zmijaGlavaY){
+          hranaY = Math.floor(Math.random() * 10)*50 
+          hranaX = Math.floor(Math.random() * 10)*50
+
+          var i = 0
+
+          while(i < zmija.length){
+            if(hranaX == zmija[i][0] && hranaY == zmija[i][1]){
+              i = 0;
+              hranaY = Math.floor(Math.random() * 10)*50 
+              hranaX = Math.floor(Math.random() * 10)*50
+            }
+            i++
+          }
+
+          var x=zmija[duzina][0]
+          var y = zmija[duzina][1]
+
+          zmija.push([x-1,y-1])
+          duzina++
+          score++;
+
+          if(score > hightScore){
+            hightScore = score;
+          }
+        }
+      }
+
+      function draw(){
+        if(gameInProgress == 0){
+
+          menu();
+
+        }else{
+
+          isFoodEaten();
+
+          document.getElementById("counter").innerHTML = "Score: " + score;
+
+          var i = 1
+          while(i < zmija.length){
+            if(zmijaGlavaX == zmija[i][0] && zmijaGlavaY == zmija[i][1]){
+              zmija = [[300,300]]
+              zmijaGlavaX = 300;
+              zmijaGlavaY = 300;
+              score = 0;
+              gameInProgress = 0;
+            }
+          i++
+          }
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.fillStyle = 'white';
+          context.strokeRect(0,0,canvas.width,canvas.height);
+          drawHrana();
+        
+
+          if(direction == 'right'){
+            zmijaGlavaX+=10
+          }
+          if(direction == 'left'){
+            zmijaGlavaX-=10
+          }
+          if(direction == 'up'){
+            zmijaGlavaY-=10
+          }
+          if(direction == 'down'){
+            zmijaGlavaY+=10
+          }
+          drawZmija();
+          doubletap = 0
+        }
+      }
+
+      setInterval(draw, 80);
+      
+    </script>
+  </head>
+  <body>
+      <p id = "counter">Score:0</p>
+  </body>
+</html>
